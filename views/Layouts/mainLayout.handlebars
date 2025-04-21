@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="tr">
+
+<head>
+
+  <script> var settings = {{{ JSONsettings }}} </script>
+
+  <script> var renderdata = {{{ JSONdata }}} </script>
+
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="author" content="flexkit">
+
+  <link rel="shortcut icon" href="/wwwroot/images/mercass_logo.png" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+
+  <!-- Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Allura&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/wwwroot/css/plugins/swiper.min.css" type="text/css">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/wwwroot/css/plugins/jquery.fancybox.css" type="text/css">
+  <link rel="stylesheet" href="/wwwroot/css/style.css" type="text/css">
+  <link rel="stylesheet" href="/wwwroot/css/site.css" type="text/css">
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--[if lt IE 9]>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+  <![endif]-->
+  <script src="/wwwroot/js/plugins/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <script src="/wwwroot/js/ajaxManager.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <script src="/wwwroot/js/plugins/imask.min.js "></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" />
+  <script src="https://cdn.jsdelivr.net/gh/mcstudios/glightbox/dist/js/glightbox.min.js"></script>
+  <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+
+  <!-- Document Title -->
+  <title>{{data.title}}</title>
+  {{>pageSeo}}
+  {{>pageCSS}}
+  {{>pageScripts}}
+</head>
+
+<body>
+
+  {{>header categoriesComponentData=menuData.MPCategories menuCD=menuData.MenuCategory
+  menuSub=menuData.subMenuCategory}}
+  {{{body}}}
+  {{>footer}}
+  <!-- External JavaScripts -->
+
+
+  <script src="/wwwroot/js/plugins/bootstrap.bundle.min.js"></script>
+  <script src="/wwwroot/js/plugins/bootstrap-slider.min.js"></script>
+
+
+  <script src="/wwwroot/js/plugins/swiper.min.js"></script>
+  <script src="/wwwroot/js/plugins/countdown.js"></script>
+  <script src="/wwwroot/js/plugins/jquery.fancybox.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Footer Scripts -->
+  <script src="/wwwroot/js/theme.js"></script>
+  <script src="/wwwroot/js/site.js"></script>
+</body>
+
+</html>

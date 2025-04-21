@@ -1,0 +1,19 @@
+{
+  "name": "esp32alarmsistemi",
+  "version": "1.0.0",
+  "description": "## 📌 Proje Hakkında",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --env-file=.env index.js",
+    "pm2Start": "pm2 start index.js -- -env-file .env"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "express": "^4.21.2",
+    "express-handlebars": "^8.0.1",
+    "mysql2": "^3.14.0"
+  }
+}
