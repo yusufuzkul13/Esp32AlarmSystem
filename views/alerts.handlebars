@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Arduino Uyarı Sistemi</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .alert-box {
+            transition: all 0.3s ease;
+        }
+        .alert strong {
+            font-size: 1.1rem;
+        }
+        .alert small {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<div class="container py-5">
+    <h2 class="mb-4 text-center">🔔 Arduino Uyarı Paneli</h2>
+
+    {{#if alerts.length}}
+        {{#each alerts}}
+            <div class="alert alert-{{this.color}} alert-dismissible fade show alert-box" role="alert">
+                <div>
+                    <strong>Buton:</strong> {{this.button}} <br>
+                    <small><i>{{this.created_at}}</i></small>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {{/each}}
+    {{else}}
+        <div class="alert alert-info" role="alert">
+            Şu anda herhangi bir uyarı yok.
+        </div>
+    {{/if}}
+
+    <p class="mt-4 text-muted text-center">Arduino cihazından gelen en son uyarılar burada görüntülenir.</p>
+</div>
+
+</body>
+</html>

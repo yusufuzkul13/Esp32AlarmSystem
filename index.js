@@ -10,10 +10,11 @@
 *
 *
 *                                                                           Author: Yusuf Uzkul
+*                                                                           Author: Uğur Duymuş
 *                                                                           Github: https://github.com/yusufuzkul13
 *
 *
-*/                                                                                                                 
+*/
 
 const express = require('express');
 const exphbs = require('express-handlebars').engine;
@@ -30,7 +31,7 @@ const port = process.env.PORT;
 // View Engine Ayarlari
 app.set("views", path.join(__dirname + "/views/"));
 app.engine(process.env.EXT, exphbs({
-   // helpers: hsbhelper,
+    // helpers: hsbhelper,
     extname: process.env.EXT,
     defaultLayout: 'mainLayout',
     layoutsDir: __dirname + '/views/Layouts/',
@@ -51,7 +52,7 @@ app.use(cookieParser({
 
 // Render Parametreleri Fonksiyonu
 
-function renderParams(req , data , gridprop, layout = "mainLayout") {
+function renderParams(req, data, gridprop, layout = "mainLayout") {
     var renderedOBJ = {};
 
     if (data) {
@@ -76,8 +77,54 @@ function renderParams(req , data , gridprop, layout = "mainLayout") {
 
 // Begin API
 
+// Login Sayfası
 app.get('/', (req, res) => {
-    res.send("Calisiyor...")
+    res.render("login", renderParams(req, null, null));
+});
+
+// alerts - post
+app.post('/alerts', async (req, res) => {
+    const { button, color } = req.body;
+
+    if (!button || !color) {
+        return res.status(400).send('Eksik veri!');
+    }
+
+    const query = `
+        INSERT INTO alerts (button, color)
+        VALUES (@button, @color)
+    `;
+
+    const params = [
+        { name: "button", value: button },
+        { name: "color", value: color }
+    ];
+
+    try {
+        const result = await sql.runSQLWithPool(query, params);
+        res.status(200).send({ _id: result.insertId || 0 }); // insertId ile id döndür
+    } catch (err) {
+        console.error("Veritabanı hatası:", err);
+        res.status(500).send('Veritabanı hatası');
+    }
+});
+
+
+// GET: Listeleme (ön yüzde gösterilecek)
+app.get('/alerts', async (req, res) => {
+    const query = `
+        SELECT * FROM alerts
+        ORDER BY created_at DESC
+        LIMIT 10
+    `;
+
+    try {
+        const alerts = await sql.runSQLWithPool(query);
+        res.render('alerts', { alerts });
+    } catch (err) {
+        console.error("Veritabanı hatası:", err);
+        res.status(500).send('Veritabanı hatası');
+    }
 });
 
 // End API

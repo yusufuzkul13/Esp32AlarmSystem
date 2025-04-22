@@ -1,0 +1,158 @@
+ARDUİNO KODU 
+
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <ArduinoJson.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+// Pinler
+const int LED1 = 15;  // Yeşil LED
+const int LED2 = 2;   // Kırmızı LED
+
+// WiFi Ayarları
+const char* SSID = "Redmi-13C";
+const char* PASSWORD = "123456789..";
+const char* SERVER_URL = "http://192.168.58.54:3071/alerts"; // Kendi sunucu IP'nizle değiştirin
+
+// Zamanlama Değişkenleri
+unsigned long previousMillis = 0;
+const long interval = 30000;  // 30 saniye
+bool toggleSignal = false;    // Sinyal değişimi için
+
+void setup() {
+  Serial.begin(115200);
+  
+  // Pin Ayarları
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  
+  // Başlangıçta LED'leri kapat
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, LOW);
+
+  // OLED Başlatma
+  if(!display.begin(SSD1306_SWITCHCAPVCC, 0x3C)) {
+    Serial.println("OLED hatası!");
+    while(1);
+  }
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.println("WiFi Baglaniyor...");
+  display.display();
+
+  // WiFi Bağlantısı
+  WiFi.begin(SSID, PASSWORD);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    display.print(".");
+    display.display();
+    Serial.print(".");
+  }
+  
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.println("WiFi Baglandi!");
+  display.print("IP: ");
+  display.println(WiFi.localIP());
+  display.display();
+  
+  Serial.println("\nWiFi Baglandi!");
+  Serial.print("IP: ");
+  Serial.println(WiFi.localIP());
+  
+  delay(2000);
+}
+
+void loop() {
+  unsigned long currentMillis = millis();
+  
+  // 30 saniyede bir sinyal gönder
+  if (currentMillis - previousMillis >= interval) {
+    previousMillis = currentMillis;
+    
+    // Sinyal değişimi
+    toggleSignal = !toggleSignal;
+    
+    if (toggleSignal) {
+      sendSignal("right", "green");  // Yeşil sinyal
+    } else {
+      sendSignal("left", "red");     // Kırmızı sinyal
+    }
+  }
+}
+
+void sendSignal(String button, String color) {
+  // LED'leri kontrol et
+  if (color == "green") {
+    digitalWrite(LED1, HIGH);  // Yeşil LED yanar
+    digitalWrite(LED2, LOW);   // Kırmızı LED söner
+  } else {
+    digitalWrite(LED1, LOW);   // Yeşil LED söner
+    digitalWrite(LED2, HIGH);  // Kırmızı LED yanar
+  }
+  
+  // OLED ve Seri Monitör Güncelleme
+  display.clearDisplay();
+  display.setCursor(0,0);
+  display.println("Sinyal Gonderiliyor");
+  display.print("Tip: ");
+  display.println(button);
+  display.print("Renk: ");
+  display.println(color);
+  display.display();
+  
+  Serial.println("\nSinyal Gonderiliyor");
+  Serial.print("Tip: ");
+  Serial.println(button);
+  Serial.print("Renk: ");
+  Serial.println(color);
+
+  // API'ye veri gönder
+  WiFiClient client;
+  HTTPClient http;
+  
+  String postData = "button=" + button + "&color=" + color;
+  
+  http.begin(client, SERVER_URL);
+  http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+  
+  int httpCode = http.POST(postData);
+  String response = http.getString();
+  
+  display.setCursor(0,40);
+  if(httpCode == 200) {
+    display.println("Basarili!");
+    display.print("Yanit: ");
+    display.println(response);
+    display.display();
+    
+    Serial.println("Basarili!");
+    Serial.print("Yanit: ");
+    Serial.println(response);
+  } else {
+    display.println("Hata!");
+    display.print("Kod: ");
+    display.println(httpCode);
+    display.display();
+    
+    Serial.println("Hata!");
+    Serial.print("Kod: ");
+    Serial.println(httpCode);
+  }
+  
+  // LED'leri 1 saniye açık tut
+  delay(1000);
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, LOW);
+  
+  http.end();
+}
